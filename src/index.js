@@ -1,11 +1,16 @@
 const path = require('path')
+const bodyParser = require('body-parser')
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const port = 3001
 
-app.use(express.static(path.join(__dirname, 'public')))
+const route = require('./routes')
 
+app.use(bodyParser.json()) // for parsing application/json ( khi sử dụng gửi từ code Javascript)
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+app.use(express.static(path.join(__dirname, 'public')))
 //Template engine-pug
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'resources/views')) // Set folder view for pug
@@ -13,14 +18,15 @@ app.set('views', path.join(__dirname, 'resources/views')) // Set folder view for
 //HTTP logger
 app.use(morgan('combined'))
 
-app.get('/profile', (req, res) => {
-    var a = 1;
-    var b = 2;
+const users = [
+  { id: 1, name: 'John'},
+  { id: 2, name: 'Linda'}
+]
 
-    var c = a + b;
-  res.render('index')
-})
+//Route init
+route(app)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
